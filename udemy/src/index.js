@@ -1,44 +1,39 @@
 // import React libraries 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import faker from 'faker'
-import CommentDetails from './CommentDetails';
-import ApproveCard from './ApproveCard';
+import SeasonDisplay from './SeasonDisplay';
+import Spinner from './Spinner';
 
 //Create React component
-const App = () => {
-  
-    return (
-      <div className= "ui container comments">
-          <ApproveCard>Are you sure?</ApproveCard>
-          <ApproveCard>
-            <CommentDetails
-            author = "Sam"
-            timeAgo = "Today at 3:20PM"
-            comment = "Hey! its me, Sam."
-            avatar = {faker.image.image()}
-            />
-          </ApproveCard>
-          <ApproveCard>
-          <CommentDetails 
-            author = "Bill"
-            timeAgo = "Today at 7:20PM"
-            comment = "Hey! its me, Bill."
-            avatar = {faker.image.image()}
-            />
-          </ApproveCard>
-          <ApproveCard>
-          <CommentDetails
-            author = "Hair"
-            timeAgo = "Today at 4:10PM"
-            comment = "Hey! its me, Hair."
-            avatar = {faker.image.image()}
-        />
-          </ApproveCard>
-          
-      </div>  
 
-    );
-};
+class App extends React.Component{
+   state = {lat:null, errorMessage: ''}
+
+    componentDidMount(){
+        window.navigator.geolocation.getCurrentPosition(
+            (position) => this.setState({lat:position.coords.latitude}), 
+            (err) => this.setState({errorMessage: err.message})
+            
+        );
+    };
+    renderContent(){
+        if(this.state.errorMessage && !this.state.lat){
+            return <div>Error:{this.state.errorMessage}</div>;
+         }
+         if(!this.state.errorMessage && this.state.lat){
+             return <div><SeasonDisplay lat = {this.state.lat}/></div>;
+         }
+         return <Spinner message = 'Please accept location request.'/>;
+     };
+
+    
+    render(){
+      return(
+        <div className="border red">
+            {this.renderContent()}
+        </div>
+      );
+    };
+}
 //Display React components
 ReactDOM.render(<App/>,document.querySelector('#root'));
