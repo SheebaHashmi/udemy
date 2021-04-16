@@ -1,47 +1,64 @@
-import React from 'react';
-import Youtube from '../apis/Youtube';
-import SearchBar from './SearchBar';
-import VideoList from './VideoList';
-import VideoDetail from './VideoDetail';
-
-class App extends React.Component{
-    state = {videos : [], selectedVideo: null}
-    componentDidMount(){
-        this.onTermSubmit('kittens');
-    }
-
-    onTermSubmit = async (term) => {
-        const response = await Youtube.get('/search',{
-            params:{
-                q:term
-            }
-        });
-      
-        this.setState({
-            videos:response.data.items,
-            selectedVideo:response.data.items[0]
-        });
-    }
-    onVideoSelect = (video) => {
-        this.setState({selectedVideo:video})
-    }
+import React,{useState} from 'react';
+import Accordion from './Accordion';
+import Search from './Search';
+import Dropdown from './Dropdown';
+import Translate from './Translate';
+import Route from './Route';
+import Header from './Header';
+const items = [
+    {
+        title:'what is react?',
+        content:'React is a front end javascript framework'
+    },
+    {
+        title:'why is react prefered?',
+        content:'React is a front end javascript framework'
+    },
+    {
+        title:'how to use react?',
+        content:'React is a front end javascript framework'
+    },
     
-    render(){
-        return (
-            <div className ="ui container">
-                <SearchBar onTermSubmit = {this.onTermSubmit}/>
-                <div className="ui grid">
-                    <div className="row">
-                        <div className="eleven wide column">
-                        <VideoDetail video = {this.state.selectedVideo}/>
-                        </div>
-                        <div className="five wide column">
-                        <VideoList onVideoSelect={this.onVideoSelect} videos = {this.state.videos}/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+]
+const options = [
+    {
+        label:'A color of red',
+        value:'red'
+    },
+    {
+        label:'A color of blue',
+        value:'blue'
+    },
+    {
+        label:'A color of yellow',
+        value:'yellow'
+    },
+]
+
+const App = () => {
+    const [selected, onSelectedChange] = useState(options[0])
+    return (
+        <div>
+            <Header/>
+           <Route path = '/'>
+               <Accordion items={items}/>
+           </Route>
+           <Route path = '/list'>
+               <Search/>
+           </Route>
+           <Route path = '/dropdown'>
+               <Dropdown 
+                label ='Select a color'
+                options = {options}
+                selected = {selected}
+                onSelectedChange = {onSelectedChange}
+
+               />
+           </Route>
+           <Route path = '/translate'>
+               <Translate/>
+           </Route>
+        </div>
+    );
 }
 export default App;
